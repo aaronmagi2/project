@@ -5,7 +5,8 @@ var node_dir = __dirname + '/node_modules';
 module.exports = {
     entry: './app.js',
     devtool: 'sourcemaps',
-    cache: true,
+    // TODO FOR DEV set back to cache: true,
+    cache: false,
     debug: true,
     resolve: {
         alias: {
@@ -22,7 +23,9 @@ module.exports = {
             {
                 test: path.join(__dirname, '.'),
                 exclude: /(node_modules)/,
-                loader: 'babel-loader'
+                // TODO remove for DEV
+                // loader: 'babel-loader'
+                loaders: ["react-hot", "babel-loader"]
             }
         ]
     }
