@@ -365,9 +365,10 @@ class UserList extends React.Component {
 				{pageInfo}
 				<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>
 				<table>
-					<tr>
+					<tr className="someTRClass">
 						<th>First Name</th>
 						<th>Last Name</th>
+						<th>User Name</th>
 						<th>Description</th>
 						<th></th>
 						<th></th>
@@ -398,6 +399,7 @@ class User extends React.Component {
 			<tr>
 				<td>{this.props.user.entity.firstName}</td>
 				<td>{this.props.user.entity.lastName}</td>
+				<td>{this.props.user.entity.userName}</td>
 				<td>{this.props.user.entity.description}</td>
 				<td>
 					<UpdateDialog user={this.props.user}

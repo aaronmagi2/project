@@ -34,7 +34,7 @@ public class DatabaseLoader implements CommandLineRunner {
 	public void run(String... strings) throws Exception {
 
 		// create users
-		this.repositoryE.save(new User("Aaron", "Magi", "amagi", "Server guy"));
+		this.repositoryE.save(new User("Aaron", "Magi", "amagi", "Developer"));
 		this.repositoryE.save(new User("Al", "Herrera", "aherrera", "Android master"));
 		this.repositoryE.save(new User("Stephen", "Moody", "smoody", "Wizard"));
 		this.repositoryE.save(new User("Matt", "Gambardella", "mgambardella", "PM"));
@@ -141,7 +141,7 @@ public class DatabaseLoader implements CommandLineRunner {
 			System.out.println("new order is " + tc.getId());
 		}
 		
-		Thread.sleep(30000);
+		//Thread.sleep(30000);
 		
 		this.repositoryTS.save(suite1);
 		

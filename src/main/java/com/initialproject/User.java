@@ -7,6 +7,7 @@ package com.initialproject;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import lombok.Data;
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 // tag::code[]
 @Data
 @Entity
+@Table(name = "user")
 public class User {
 
 	private @Id @GeneratedValue Long id;
