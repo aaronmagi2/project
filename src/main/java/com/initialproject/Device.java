@@ -40,7 +40,9 @@ public class Device {
 	private String phoneType;
 	private String cellSignalStrength;
 	private String cellLocation;
-	private String wifiStrength;
+	private String wifiStrength;	
+
+	private @Version @JsonIgnore Long version;
 
 	private Device() {}
 
