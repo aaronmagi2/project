@@ -21,13 +21,19 @@ public class DatabaseLoader implements CommandLineRunner {
 	private final TestCaseRepository repositoryTC;
 	private final UserRepository repositoryE;
 	private final DeviceRepository repositoryD;
+	private final TestResultRepository repositoryTR;
 
 	@Autowired
-	public DatabaseLoader(TestSuiteRepository repositoryTS, TestCaseRepository repositoryTC, UserRepository repositoryE, DeviceRepository repositoryD) {
+	public DatabaseLoader(TestSuiteRepository repositoryTS, 
+			TestCaseRepository repositoryTC, 
+			UserRepository repositoryE, 
+			DeviceRepository repositoryD, 
+			TestResultRepository repositoryTR) {
 		this.repositoryTS = repositoryTS;
 		this.repositoryTC = repositoryTC;
 		this.repositoryE = repositoryE;
 		this.repositoryD = repositoryD;
+		this.repositoryTR = repositoryTR;
 	}
 
 	@Override
@@ -38,7 +44,7 @@ public class DatabaseLoader implements CommandLineRunner {
 		this.repositoryE.save(new User("Al", "Herrera", "aherrera", "Android master"));
 		this.repositoryE.save(new User("Stephen", "Moody", "smoody", "Wizard"));
 		this.repositoryE.save(new User("Matt", "Gambardella", "mgambardella", "PM"));
-		
+	
 		// create some devices
 		
 		// create samsung device (AL)

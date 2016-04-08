@@ -4,7 +4,7 @@
   "description": "Demo of ReactJS + Spring Data REST",
   "repository": {
     "type": "git",
-    "url": "git@github.com:spring-guides/tut-react-and-spring-data-rest.git"
+    "url": "git@github.com:aaronmagi2/project.git"
   },
   "keywords": [
     "rest",
@@ -13,12 +13,12 @@
     "data",
     "react"
   ],
-  "author": "Greg L. Turnquist",
+  "author": "Aaron Magi",
   "license": "ASLv2",
   "bugs": {
-    "url": "https://github.com/spring-guides/tut-react-and-spring-data-rest/issues"
+    "url": "hhttps://github.com/aaronmagi2/project.git/issues"
   },
-  "homepage": "https://github.com/spring-guides/tut-react-and-spring-data-rest",
+  "homepage": "https://github.com/aaronmagi2/project.git",
   "dependencies": {
     "babel-core": "^5.8.25",
     "babel-loader": "^5.3.2",
