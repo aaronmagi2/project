@@ -231,7 +231,7 @@ public class DatabaseLoader implements CommandLineRunner {
 			}
 			
 			// Now test the individual test cases
-			// for each test case preform the test
+			// for each test case perform the test
 			for(TestCase testCase: te2.getTestCases()) {
 				System.out.println("STARTING TEST FOR : " + testCase.getDescription());
 				
