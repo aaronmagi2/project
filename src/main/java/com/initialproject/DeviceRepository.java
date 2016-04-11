@@ -10,7 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @author Aaron Magi
  */
 // tag::code[]
-public interface DeviceRepository extends PagingAndSortingRepository<Device, Long> {
+public interface DeviceRepository extends PagingAndSortingRepository<Device, String> {
 
 }
 // end::code[]

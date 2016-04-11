@@ -16,7 +16,7 @@ import java.util.*;
 @Component
 public class DatabaseLoader implements CommandLineRunner {
 
-
+	private final TestExecutionRepository repositoryTE;
 	private final TestSuiteRepository repositoryTS;
 	private final TestCaseRepository repositoryTC;
 	private final UserRepository repositoryE;
@@ -24,11 +24,13 @@ public class DatabaseLoader implements CommandLineRunner {
 	private final TestResultRepository repositoryTR;
 
 	@Autowired
-	public DatabaseLoader(TestSuiteRepository repositoryTS, 
+	public DatabaseLoader(TestExecutionRepository repositoryTE,
+			TestSuiteRepository repositoryTS, 
 			TestCaseRepository repositoryTC, 
 			UserRepository repositoryE, 
 			DeviceRepository repositoryD, 
 			TestResultRepository repositoryTR) {
+		this.repositoryTE = repositoryTE;
 		this.repositoryTS = repositoryTS;
 		this.repositoryTC = repositoryTC;
 		this.repositoryE = repositoryE;
@@ -48,7 +50,7 @@ public class DatabaseLoader implements CommandLineRunner {
 		// create some devices
 		
 		// create samsung device (AL)
-		this.repositoryD.save(new Device("samsung",
+		Device samsung = new Device("samsung",
 				"samsung-sm-n920a",
 				"0915f940d8211d04",
 				"samsung",
@@ -65,10 +67,11 @@ public class DatabaseLoader implements CommandLineRunner {
 				"gsm",
 				"5",
 				"[37135,107899658,65]",
-				"4 out of 5"));
+				"4 out of 5");
+		this.repositoryD.save(samsung);
 		
 		// create FAKE nexus
-		this.repositoryD.save(new Device("google",
+		Device nexus = new Device("google",
 				"nexus-n920a",
 				"2912f940d8211d04",
 				"samsung",
@@ -85,13 +88,14 @@ public class DatabaseLoader implements CommandLineRunner {
 				"gsm",
 				"5",
 				"[37135,107899658,65]",
-				"4 out of 5"));
+				"4 out of 5");
+		this.repositoryD.save(nexus);
 		
 		
-		TestCase tcA = new TestCase("amagi", 1, "test case a");
-		TestCase tcB = new TestCase("amagi", 1, "test case b");
-		TestCase tcC = new TestCase("amagi", 1, "test case c");
-		TestCase tcD = new TestCase("amagi", 1, "test case d");
+		TestCase tcA = new TestCase("amagi", 1, "test case A");
+		TestCase tcB = new TestCase("amagi", 1, "test case B");
+		TestCase tcC = new TestCase("amagi", 1, "test case C");
+		TestCase tcD = new TestCase("amagi", 1, "test case D");
 		this.repositoryTC.save(tcA);
 		this.repositoryTC.save(tcB);
 		this.repositoryTC.save(tcC);
@@ -112,6 +116,25 @@ public class DatabaseLoader implements CommandLineRunner {
 				"my 2nd test suite");
 		
 		this.repositoryTS.save(ts2);
+		
+		TestSuite ts3 = new TestSuite(new LinkedList<TestCase>(){{add(tcA);add(tcD);}},
+				"amagi", 
+				"my 3nd test suite");
+		
+		this.repositoryTS.save(ts3);
+		
+		
+		// create Test Execution
+		TestExecution te = new TestExecution(new LinkedList<TestSuite>(){{add(ts);}},
+				new LinkedList<TestCase>(){{add(tcD);add(tcA);}},
+				new HashSet<Device>(){{add(samsung);add(nexus);}},
+				new HashSet<TestResult>(),
+				"amagi", 
+				"my test execution ONE");
+		
+		Long teID = this.repositoryTE.save(te).getId();
+		
+		
 		
 		System.out.println("Test lazy loading");
 		TestSuite suite1 = this.repositoryTS.findByIdAndFetchTestCasesEagerly(id);
@@ -142,7 +165,119 @@ public class DatabaseLoader implements CommandLineRunner {
 		suite1.setTestCases(newList);
 		//System.out.println("Suite list " + suite1.getTestCases().toString());
 		
+		// TEST EXECUTION TEST
+		// Run pretending to create a execution and run through results for each test case
+		// create Test Execution
+		TestExecution te2 = new TestExecution(new LinkedList<TestSuite>(){{add(ts2);add(ts3);}},
+				new LinkedList<TestCase>(){{add(tcD);add(tcA);}},
+				new HashSet<Device>(){{add(samsung);add(nexus);}},
+				new HashSet<TestResult>(),
+				"amagi", 
+				"test execution TWO");
 		
+		this.repositoryTE.save(te2);
+				
+	
+		HashSet<TestResult> resultSet = new HashSet<TestResult>();
+		
+		// HOOK INTO ADB 
+		
+		// FOR EACH DEIVCE Create a container to run tests
+		for (Device device : te2.getDevices()) {
+			System.out.println("Testing Device Manufacture: " + device.getManufacturer() + " Model: " + device.getModel() + " softwareVersion: " + device.getSoftwareVersion());
+			
+			// Call to device....
+			// run a pretend ADB calls for the TE 
+			
+			// TODO the following is only for test purposes, this would be written into a separate Test Execution Handler class
+			
+			// TEST THE TEST SUITES
+			for(TestSuite testSuite: te2.getTestSuites()) {
+				System.out.println("TESTING SUITE " + testSuite.getDescription());
+				
+				// for each test case preform the test
+				for(TestCase testCase: testSuite.getTestCases()) {
+					System.out.println("STARTING TEST FOR : " + testCase.getDescription());
+					
+					// hook into ADB and do test
+					System.out.println("TEST FINISHED FOR : " + testCase.getDescription());
+					
+					
+					Random ran = new Random();
+					
+					// Create RESULT object
+					TestResult testResult = new TestResult(te2,
+					testSuite,
+					testCase,
+					device,
+					new String(ran.nextInt(1) == 0 ? "PASSED" : "FAILED"), 
+					new Date().toString(), 
+					ran.nextInt(10000),
+					"androidDeviceData",
+					"performanceMetrics",
+					"videoLocation",
+					"screenShotLocation",
+					"log");
+					
+
+					// save the result
+					resultSet.add(repositoryTR.save(testResult));
+					
+					// Add the test result
+					// TODO this would be done as a whole list once the test finishes 
+					//te2.getTestResults().add(testResult);
+				}
+				
+			}
+			
+			// Now test the individual test cases
+			// for each test case preform the test
+			for(TestCase testCase: te2.getTestCases()) {
+				System.out.println("STARTING TEST FOR : " + testCase.getDescription());
+				
+				// hook into ADB and do test
+				System.out.println("TEST FINISHED FOR : " + testCase.getDescription());
+				
+				
+				Random ran = new Random();
+				
+				// Create RESULT object
+				TestResult testResult = new TestResult(te2,
+				null,    // there is no test suite associated with these tests
+				testCase,
+				device,
+				new String(ran.nextInt(1) == 0 ? "PASSED" : "FAILED"), 
+				new Date().toString(), 
+				ran.nextInt(10000),
+				"androidDeviceData",
+				"performanceMetrics",
+				"videoLocation",
+				"screenShotLocation",
+				"log");
+				
+				
+				// save the result
+				resultSet.add(repositoryTR.save(testResult));
+				
+				// Add the test result
+				// TODO this would be done as a whole list once the test finishes 
+				//te2.getTestResults().add(testResult);
+			}
+		}
+		
+		/*
+		System.out.println("going to save te2");
+		repositoryTE.save(te2);
+
+		System.out.println("going to add");
+		te2.getTestResults().addAll(resultSet);
+		System.out.println("going to save te2");
+		repositoryTE.save(te2);
+		
+		*/
+		
+		
+		/*
 		for(TestCase tc: suite1.getTestCases()) {
 			System.out.println("new order is " + tc.getId());
 		}
@@ -152,7 +287,34 @@ public class DatabaseLoader implements CommandLineRunner {
 		this.repositoryTS.save(suite1);
 		
 		
+		// Run a TE
+		
+		
+		// test  TE
+		
+		System.out.println("Getting TE with id " + teID);
+		TestExecution teFromDB = this.repositoryTE.findOne(teID);
+		System.out.println("Have TE");
+		System.out.println("TE = " + teFromDB.getDescription());
+		for(Device d : teFromDB.getDevices()) {
+			System.out.println("has device");
+			System.out.println("Device " + d.getSerial());
+		}
+		*/
+		/*
+		System.out.println("Getting TE with id " + teID);
+		TestExecution teFromDB = this.repositoryTE.findByIdAndFetchDependenciesEagerly(teID);
+		System.out.println("Have TE");
+		for(Device d : teFromDB.getDevices()) {
+			
+			System.out.println("Device " + d.getSerial());
+		}
+		*/
 		
 	}
+	
+	
+	
+	
 }
 // end::code[]

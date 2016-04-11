@@ -5,6 +5,7 @@
 package com.initialproject;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -23,18 +24,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 // tag::code[]
 @Data
 @Entity
-@Table(name = "result")
+@Table(name = "test_result")
 public class TestResult {
 
 	private @Id @GeneratedValue Long id;
 	
-	private Long testSuiteID;
-	private Long testCaseID;
-	private String deviceID;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	private TestExecution testExecution;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	private TestSuite testSuite;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	private TestCase testCase;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	private Device device;
 	
 	private String status;
 	private String date;
-	private String timeToRun;
+	private int timeToRun;
 	private String androidDeviceData;
 	private String performanceMetrics;
 	private String videoLocation;
@@ -45,20 +55,22 @@ public class TestResult {
 	
 	private TestResult() {}
 
-	public TestResult(Long testSuiteID,
-			Long testCaseID,
-			String deviceID,
+	public TestResult(TestExecution testExecution,
+			TestSuite testSuite,
+			TestCase testCase,
+			Device device,
 			String status, 
 			String date, 
-			String timeToRun, 
+			int timeToRun, 
 			String androidDeviceData,
 			String performanceMetrics,
 			String videoLocation,
 			String screenShotLocation,
 			String log) {
-		this.testSuiteID = testSuiteID;
-		this.testCaseID = testCaseID;
-		this.deviceID = deviceID;
+		this.testExecution = testExecution;
+		this.testSuite = testSuite;
+		this.testCase = testCase;
+		this.device = device;
 		this.status = status;
 		this.date = date;
 		this.timeToRun = timeToRun;
@@ -67,6 +79,6 @@ public class TestResult {
 		this.videoLocation = videoLocation;
 		this.screenShotLocation = screenShotLocation;
 		this.log = log;
-	}
+	}	
 }
 // end::code[]
